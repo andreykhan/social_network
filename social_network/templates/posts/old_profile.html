@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}
+{% for post in page_obj %}
+<title>Профайл пользователя {{ post.author }}</title>
+{% endfor %}
+{% endblock %}
+{% block content %}
+<main>
+  <div class="container py-5">        
+    <h1>Все посты пользователя {{ page_obj.0.author }} </h1>
+    <h3>Всего постов: {{ posts_count }} </h3>   
+    <article>
+      <p>
+        {% for post in page_obj %}
+        <h6> {{ post.text }} </h6> <hr> 
+        {% endfor %}
+      </p>
+    </article>       
+  </div>
+</main>
+<h5>Всего постов: {{ posts_count }}</h5>
+{% include 'includes/paginator.html' %}
+{% endblock %}
