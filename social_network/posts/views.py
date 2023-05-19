@@ -72,4 +72,19 @@ def post_create(request):
             return redirect('posts:profile', username=request.user)
     else:
         form = CreatePost()
-    return render(request, template, {'form': form, 'grouplist':grouplist})
+    return render(request, template, {'form': form, 'grouplist': grouplist})
+
+
+@csrf_exempt
+def post_edit(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if request.method == 'GET':
+        if not request.user == post.author:
+            return redirect('posts:post_detail', post_id=post_id)
+        form = CreatePost(instance=post)
+    if request.method == 'POST':
+        form = CreatePost(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+        return redirect('posts:post_detail', post_id=post_id)
+    return render(request, 'posts/edit_post.html', {'form': form})
