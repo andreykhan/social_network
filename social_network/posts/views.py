@@ -1,6 +1,8 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Post, Group, User
 from django.core.paginator import Paginator
+from .forms import CreatePost
+from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
@@ -57,5 +59,17 @@ def post_detail(request, post_id):
     return render(request, template, context)
 
 
-def post_create():
-    pass
+@csrf_exempt
+def post_create(request):
+    template = 'posts/create_post.html'
+    grouplist = Group.objects.all()
+    if request.method == 'POST':
+        form = CreatePost(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('posts:profile', username=request.user)
+    else:
+        form = CreatePost()
+    return render(request, template, {'form': form, 'grouplist':grouplist})
