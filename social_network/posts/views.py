@@ -3,6 +3,7 @@ from .models import Post, Group, User
 from django.core.paginator import Paginator
 from .forms import CreatePost
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 
 def index(request):
@@ -60,6 +61,7 @@ def post_detail(request, post_id):
 
 
 @csrf_exempt
+@login_required
 def post_create(request):
     template = 'posts/create_post.html'
     grouplist = Group.objects.all()
@@ -76,6 +78,7 @@ def post_create(request):
 
 
 @csrf_exempt
+@login_required
 def post_edit(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     if request.method == 'GET':
@@ -87,4 +90,4 @@ def post_edit(request, post_id):
         if form.is_valid():
             form.save()
         return redirect('posts:post_detail', post_id=post_id)
-    return render(request, 'posts/edit_post.html', {'form': form})
+    return render(request, 'posts/edit_post.html', {'form': form, 'is_edit': 'is_edit'})

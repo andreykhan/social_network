@@ -8,7 +8,13 @@
     {% csrf_token %}
     {{ form.as_p }}
 
-    <button type="submit">Опубликовать</button>
+    <button type="submit" class="btn btn-primary">
+        {% if is_edit %}
+          Изменить Пост
+        {% else %}
+          Добавить
+        {% endif %}               
+      </button> 
 </form>
 </main>
 {% endblock %}
