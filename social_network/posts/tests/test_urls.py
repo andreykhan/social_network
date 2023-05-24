@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
+from http import HTTPStatus
 
 from posts.models import Post, Group
 
@@ -56,7 +57,7 @@ class PostUrlTests(TestCase):
         for i in self.unauthorized_pages:
             with self.subTest(i=i):
                 response = self.guest_client.get(i)
-                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_authorized_urls_exists_at_desired_location(self):
         """
@@ -66,7 +67,7 @@ class PostUrlTests(TestCase):
         for i in self.unauthorized_pages:
             with self.subTest(i=i):
                 response = self.authorized_client.get(i)
-                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_pages_redirects_anonymous(self):
         """
@@ -81,7 +82,7 @@ class PostUrlTests(TestCase):
     def test_incorrect_page_does_not_exists(self):
         """Запрос к несуществующей странице возвращает ошибку 404"""
         response = self.guest_client.get('/kill/')
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
     def test_urls_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
