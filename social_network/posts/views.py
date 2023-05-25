@@ -49,7 +49,6 @@ def profile(request, username):
 
 def post_detail(request, post_id):
     template = 'posts/post_detail.html'
-    #id = get_object_or_404(Post, id=post_id)
     post = Post.objects.get(id=post_id)
     user = User.objects.get(username=post.author)
     users_posts_count = Post.objects.filter(author=user).count()
@@ -80,6 +79,7 @@ def post_create(request):
 @csrf_exempt
 @login_required
 def post_edit(request, post_id):
+    template = 'posts/edit_post.html'
     post = get_object_or_404(Post, id=post_id)
     if request.method == 'GET':
         if not request.user == post.author:
@@ -90,4 +90,4 @@ def post_edit(request, post_id):
         if form.is_valid():
             form.save()
         return redirect('posts:post_detail', post_id=post_id)
-    return render(request, 'posts/edit_post.html', {'form': form, 'is_edit': 'is_edit'})
+    return render(request, template, {'form': form, 'is_edit': 'is_edit'})
