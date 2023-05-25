@@ -13,7 +13,7 @@
               Новый пост             
             </div>
             <div class="card-body">        
-              <form method="post" action={% url 'posts:post_create' %}>
+              <form method="post" enctype="multipart/form-data" action={% url 'posts:post_create' %}>
                 {% csrf_token %}
                 <input type="hidden" name="csrfmiddlewaretoken" value="">            
                 <div class="form-group row my-3 p-3">

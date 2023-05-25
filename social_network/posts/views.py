@@ -65,7 +65,11 @@ def post_create(request):
     template = 'posts/create_post.html'
     grouplist = Group.objects.all()
     if request.method == 'POST':
-        form = CreatePost(request.POST)
+        form = CreatePost(
+            request.POST or None, 
+            files=request.FILES or None, 
+            instance=post
+            )
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
@@ -86,7 +90,11 @@ def post_edit(request, post_id):
             return redirect('posts:post_detail', post_id=post_id)
         form = CreatePost(instance=post)
     if request.method == 'POST':
-        form = CreatePost(request.POST, instance=post)
+        form = CreatePost(
+            request.POST or None, 
+            files=request.FILES or None, 
+            instance=post
+            )
         if form.is_valid():
             form.save()
         return redirect('posts:post_detail', post_id=post_id)
