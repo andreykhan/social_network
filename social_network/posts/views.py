@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post, Group, User
+from .models import Post, Group, User, Comment
 from django.core.paginator import Paginator
-from .forms import CreatePost
+from .forms import CreatePost, CreateComment
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 
@@ -49,12 +49,16 @@ def profile(request, username):
 
 def post_detail(request, post_id):
     template = 'posts/post_detail.html'
-    post = Post.objects.get(id=post_id)
+    post = get_object_or_404(Post, id=post_id)
     user = User.objects.get(username=post.author)
+    form = CreateComment(request.POST or None)
+    comments = Comment.objects.filter(post=post)
     users_posts_count = Post.objects.filter(author=user).count()
     context = {
         'page_obj': post,
-        'users_posts_count': users_posts_count
+        'users_posts_count': users_posts_count,
+        'comments': comments,
+        'form': form
     }
     return render(request, template, context)
 
@@ -97,3 +101,15 @@ def post_edit(request, post_id):
             form.save()
         return redirect('posts:post_detail', post_id=post_id)
     return render(request, template, {'form': form, 'is_edit': 'is_edit'})
+
+
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    form = CreateComment(request.POST or None)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.author = request.user
+        comment.post = post
+        comment.save()
+    return redirect('posts:post_detail', post_id=post_id) 
