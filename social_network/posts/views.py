@@ -53,7 +53,7 @@ def post_detail(request, post_id):
     user = User.objects.get(username=post.author)
     users_posts_count = Post.objects.filter(author=user).count()
     context = {
-        'post': post,
+        'page_obj': post,
         'users_posts_count': users_posts_count
     }
     return render(request, template, context)
@@ -68,7 +68,6 @@ def post_create(request):
         form = CreatePost(
             request.POST or None, 
             files=request.FILES or None, 
-            instance=post
             )
         if form.is_valid():
             post = form.save(commit=False)
@@ -85,16 +84,15 @@ def post_create(request):
 def post_edit(request, post_id):
     template = 'posts/edit_post.html'
     post = get_object_or_404(Post, id=post_id)
-    if request.method == 'GET':
-        if not request.user == post.author:
-            return redirect('posts:post_detail', post_id=post_id)
-        form = CreatePost(instance=post)
-    if request.method == 'POST':
-        form = CreatePost(
+    form = CreatePost(
             request.POST or None, 
             files=request.FILES or None, 
             instance=post
             )
+    if request.method == 'GET':
+        if not request.user == post.author:
+            return redirect('posts:post_detail', post_id=post_id)
+    if request.method == 'POST':
         if form.is_valid():
             form.save()
         return redirect('posts:post_detail', post_id=post_id)

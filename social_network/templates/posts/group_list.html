@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load thumbnail %}
 {% block title %}
 <title>Group Page</title>
 {% endblock %}
@@ -6,6 +7,9 @@
 {% for post in page_obj %}
 <main>
   <h5>{{ post.author }} </h5>
+    {% thumbnail post.image "100x50" crop="center" upscale=True as im %}
+      <img class="card-img my-2" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+    {% endthumbnail %}
   <h6>{{ post.text }} </h6>
 </main>
 {% endfor %}
