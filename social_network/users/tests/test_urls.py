@@ -1,5 +1,7 @@
-from django.test import TestCase, Client
 from http import HTTPStatus
+
+from django.test import Client, TestCase
+
 
 class UsersUrlTests(TestCase):
     def setUp(self) -> None:
