@@ -175,3 +175,25 @@ class ImagesTests(TestCase):
         self.assertTrue(
             Post.objects.filter(text="Тесты картинок", image="posts/small.gif").exists()
         )
+
+    
+class CommentTests(TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        cls.user = User.objects.create_user(username='comment_test')
+        cls.group = Group.objects.create(
+            title = 'тестовая группа для проверки комментариев',
+            slug = 'actors'
+        )
+        cls.post = Post.objects.create(
+            text = 'Пост для тестирования комментариев',
+            pub_date = 'May 19, 2023, 10:32 a.m.',
+            author = cls.user,
+            group = cls.group
+        )
+
+    def setUp(self) -> None:
+        self.authorized_client = Client()
+        self.authorized_client.force_login(self.user)
+

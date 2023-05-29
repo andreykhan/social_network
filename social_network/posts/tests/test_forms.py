@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from posts.models import Group, Post
+from posts.models import Group, Post, Comment
 
 User = get_user_model()
 
@@ -21,6 +21,11 @@ class PostCreateFormTest(TestCase):
         cls.post = Post.objects.create(
             text = 'Текстовый заголовок',
             author = cls.user,
+        )
+        cls.comment = Comment.objects.create(
+            text = 'тестовый комментарий',
+            author = cls.user,
+            post = cls.post,
         )
 
     def setUp(self) -> None:
@@ -63,4 +68,10 @@ class PostCreateFormTest(TestCase):
         self.assertEqual(Post.objects.count(), posts_count)
         self.assertTrue(Post.objects.filter(text='Новый текст').exists())
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        
+
+    def test_comment_exists_at_post_detail_page(self):
+        """комментарий отображается на странице поста"""
+        response = self.authorized_client.get(
+            reverse('posts:post_detail', kwargs={'post_id': self.post.id})
+        )
+        self.assertEqual(response.context['comments'][0].text, self.comment.text)

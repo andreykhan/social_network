@@ -26,11 +26,11 @@ class PostUrlTests(TestCase):
             "/",
             "/group/actors/",
             "/profile/test_author/",
-            f"/posts/{cls.post.id}/"
+            f"/posts/{cls.post.id}/",
         ]
         cls.authorized_pages = [
             "/create/",
-            f"/posts/{cls.post.id}/edit/"
+            f"/posts/{cls.post.id}/edit/",
         ]
         cls.templates_url_names = {
             "/": "posts/index.html",
@@ -42,7 +42,8 @@ class PostUrlTests(TestCase):
         }
         cls.redirect_pages = {
             "/create/": "/auth/login/?next=/create/",
-            f"/posts/{cls.post.id}/edit/": f"/auth/login/?next=/posts/{cls.post.id}/edit/"
+            f"/posts/{cls.post.id}/edit/": f"/auth/login/?next=/posts/{cls.post.id}/edit/",
+            f"/posts/{cls.post.id}/comment/": f"/auth/login/?next=/posts/{cls.post.id}/comment/"
         }
 
     def setUp(self) -> None:
@@ -62,17 +63,19 @@ class PostUrlTests(TestCase):
 
     def test_authorized_urls_exists_at_desired_location(self):
         """
-        Страницы /create, f"/posts/{post.id}/edit/"
+        Страницы /create, f"/posts/{post.id}/edit/",
+        f"/posts/{post.id}/comment/"
         доступны авторизованным пользователям.
         """
-        for i in self.unauthorized_pages:
+        for i in self.authorized_pages:
             with self.subTest(i=i):
                 response = self.authorized_client.get(i)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_pages_redirects_anonymous(self):
         """
-        Страницы "/create/",/posts/{post.id}/edit/
+        Страницы "/create/",/posts/{post.id}/edit/,
+        f"/posts/{post.id}/comment/"
         редиректят неавторизованных юзеров
         """
         for page, url in self.redirect_pages.items():
