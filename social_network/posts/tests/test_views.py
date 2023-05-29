@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
+from django.core.cache import cache
 
 from posts.models import Group, Post
 
@@ -48,7 +49,12 @@ class PostPagesTest(TestCase):
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
-    def test_pages_users_correct_templates(self):
+    def test_main_page_uses_correct_template(self):
+        """страница 404 отдает кастомный шаблон"""
+        response = self.guest_client.get('http://127.0.0.1:8000/test/')
+        self.assertTemplateUsed(response, 'core/404.html')
+
+    def test_pages_uses_correct_templates(self):
         """страницы используют соответствующие шаблоны"""
         for template, reverse_name in self.templates_and_urls.items():
             with self.subTest(reverse_name=reverse_name):
@@ -149,7 +155,7 @@ class ImagesTests(TestCase):
 
     def test_image_in_all_pages(self):
         """
-        картина передается на /,group/<slug:slug>/,
+        картинка передается на /,group/<slug:slug>/,
         profile/<slug:username>/
         """
         pages = [
@@ -176,24 +182,54 @@ class ImagesTests(TestCase):
             Post.objects.filter(text="Тесты картинок", image="posts/small.gif").exists()
         )
 
-    
-class CommentTests(TestCase):
+
+class CacheTests(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.user = User.objects.create_user(username='comment_test')
+        cls.user = User.objects.create_user(username='test_user_for_cache')
         cls.group = Group.objects.create(
-            title = 'тестовая группа для проверки комментариев',
+            title = 'test_for_cache',
             slug = 'actors'
-        )
-        cls.post = Post.objects.create(
-            text = 'Пост для тестирования комментариев',
-            pub_date = 'May 19, 2023, 10:32 a.m.',
-            author = cls.user,
-            group = cls.group
         )
 
     def setUp(self) -> None:
+        super().setUp()
+        self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
+    # def test_cache_main_page(self):
+    #     """
+    #     тестирование работы кэша главной 
+    #     страницы через добавление объекта
+    #     """
+    #     old_response = self.authorized_client.get(reverse('posts:main_page'))
+    #     Post.objects.create(
+    #         text = 'test_for_cache',
+    #         author = self.user,
+    #         group = self.group
+    #     )
+    #     response = self.authorized_client.get(reverse('posts:main_page'))
+    #     self.assertEqual(old_response.content, response.content)
+    #     cache.clear()
+    #     new_response = self.authorized_client.get(reverse('posts:main_page'))
+    #     self.assertNotEqual(old_response.content, new_response.content)
+
+    # def test_cache_main_page_alternative(self):
+    #     """
+    #     тестирование работы кэша главной 
+    #     страницы через удаление объекта
+    #     """
+    #     post = Post.objects.create(
+    #         text = 'test_for_cache',
+    #         author = self.user,
+    #         group = self.group
+    #     )
+    #     old_response = self.authorized_client.get(reverse('posts:main_page'))
+    #     Post.objects.filter(id=post.id).delete()
+    #     response = self.authorized_client.get(reverse('posts:main_page'))
+    #     cache.clear()
+    #     new_response = self.authorized_client.get(reverse('posts:main_page'))
+    #     self.assertEqual(old_response.content, response.content)
+    #     self.assertNotEqual(old_response.content, new_response.content)
