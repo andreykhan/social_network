@@ -60,3 +60,16 @@ class Comment(CreateModel):
         verbose_name='comments'
     )
     text = models.TextField()
+
+
+class Follow(models.Model):
+    follower = models.ForeignKey(
+        User,
+        on_delete=models.DO_NOTHING,
+        related_name='follower'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='following'
+    )

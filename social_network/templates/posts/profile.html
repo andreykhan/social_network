@@ -3,10 +3,30 @@
 {% block title %}
 <title>Профайл пользователя {{ page_obj.0.author }}</title>
 {% endblock %}
+{% block header %}
+-
+{% endblock header %}
 {% block content %}
 <main>
     <div class="container py-5">        
       <h1>Все посты пользователя {{ page_obj.0.author }} </h1>
+      <div class="mb-5">
+        {% if following %}
+          <a
+            class="btn btn-lg btn-light"
+            href="{% url 'posts:profile_unfollow' page_obj.0.author %}" role="button"
+          >
+            Отписаться
+          </a>
+        {% else %}
+            <a
+              class="btn btn-lg btn-primary"
+              href="{% url 'posts:profile_follow' page_obj.0.author %}" role="button"
+            >
+              Подписаться
+            </a>
+         {% endif %}
+      </div>
       <h3>Всего постов: {{ posts_count }} </h3>   
       <article>
         <ul>
@@ -26,7 +46,6 @@
         </p>
         <a href="{% url 'posts:post_detail' post.id %}">подробная информация </a>
       </article>
-
       <hr>
       {% endfor %}       
       <hr>
@@ -34,5 +53,4 @@
       <!-- Здесь подключён паджинатор -->  
     </div>
   </main>
-{% include 'includes/paginator.html' %}
 {% endblock %}

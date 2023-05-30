@@ -4,11 +4,12 @@
 <title>Main Page</title>
 {% endblock %}
 {% block content %}
+{% include 'includes/switcher.html' %}
 {% for post in page_obj %}
-<main> 
+<main>
   <h5>{{ post.author }}</h5>
-    {% thumbnail post.image "100x50" crop="center" upscale=True as im %}
-      <img class="card-img my-2" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+    {% thumbnail post.image "1200x300" crop="center" upscale=True as im %}
+      <img class="card-img my-2" src="{{ im.url }}" width="1" height="150">
     {% endthumbnail %}
   <h6>{{ post.text }}</h6>
   <h6>{{ post.pub_date }}</h6>

@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import cache_page
 
 from .forms import CreateComment, CreatePost
-from .models import Comment, Group, Post, User
+from .models import Comment, Group, Post, User, Follow
 
 
 #@cache_page(20*1, key_prefix='index_page')
@@ -43,9 +43,14 @@ def profile(request, username):
     paginator = Paginator(posts, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    following = (request.user.is_authenticated and 
+                 request.user != user and 
+                 Follow.objects.filter(follower=request.user, 
+                                       author=user).exists()) 
     context = {
         'page_obj': page_obj,
-        'posts_count': posts_count
+        'posts_count': posts_count,
+        'following': following
     }
     return render(request, template, context)
 
@@ -116,3 +121,30 @@ def add_comment(request, post_id):
         comment.post = post
         comment.save()
     return redirect('posts:post_detail', post_id=post_id)
+
+@login_required
+def follow_index(request):
+    template = 'posts/follow.html'
+    posts = Post.objects.filter(author__following__follower=request.user)
+    paginator = Paginator(posts, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {
+        'page_obj': page_obj
+    }
+    return render(request, template, context)
+
+@login_required 
+def profile_follow(request, username): 
+    author = get_object_or_404(User, username=username) 
+    follow_check = Follow.objects.filter(author=author, follower=request.user) 
+    if author != request.user and not follow_check.exists(): 
+        Follow.objects.create(follower=request.user, author=author) 
+    return redirect('posts:profile', username=username) 
+
+@login_required 
+def profile_unfollow(request, username): 
+    get_object_or_404(Follow, 
+                      follower=request.user, 
+                      author__username=username).delete() 
+    return redirect('posts:profile', username=username)
