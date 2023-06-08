@@ -36,6 +36,7 @@ class Post(models.Model):
         blank=True,
         null=True,
         on_delete=models.CASCADE,
+        related_name='posts',
         verbose_name='Группа',
         help_text='Группа, к которой будет относиться пост'
     )
