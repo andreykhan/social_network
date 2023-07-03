@@ -12,7 +12,7 @@ services:
       - /var/lib/postgresql/data/
     # адрес файла, где хранятся переменные окружения
     env_file:
-      - infra/.env
+      - .env
   web:
     build: social_network/
 #    restart: always
