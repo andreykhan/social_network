@@ -6,16 +6,11 @@ on: [push]
 
 jobs:
   tests:
-    # «Раннер» — создание изолированного окружения с последней версией Ubuntu 
     runs-on: ubuntu-latest
 
     steps:
-    # Запуск actions checkout — готового скрипта 
-    # для клонирования репозитория
     - uses: actions/checkout@v2
     - name: Set up Python
-      # Запуск actions setup-python — готового скрипта 
-      # для развёртывания окружения Python
       uses: actions/setup-python@v2
       with:
         # Выбор версии Python
@@ -34,3 +29,5 @@ jobs:
       run: |
         # запуск проверки проекта по flake8
         python -m flake8
+        cd posts/tests/
+        python manage.py test_urls.py
