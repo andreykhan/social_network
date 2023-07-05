@@ -29,5 +29,5 @@ jobs:
       run: |
         # запуск проверки проекта по flake8
         python -m flake8
-        cd posts/tests/
+        cd social_network/posts/tests/
         python manage.py test_urls.py
