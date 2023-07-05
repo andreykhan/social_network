@@ -1,14 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 
 from .forms import CreateComment, CreatePost
 from .models import Comment, Follow, Group, Post, User
 
 
-#@cache_page(20*1, key_prefix='index_page')
+# @cache_page(20*1, key_prefix='index_page')
 def index(request):
     template = 'posts/index.html'
     posts = Post.objects.all().order_by('-pub_date')
@@ -43,10 +42,11 @@ def profile(request, username):
     paginator = Paginator(posts, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    following = (request.user.is_authenticated and 
-                 request.user != user and 
-                 Follow.objects.filter(follower=request.user, 
-                                       author=user).exists()) 
+    following = (
+        request.user.is_authenticated
+        and request.user != user
+        and Follow.objects.filter(follower=request.user, author=user).exists()
+    )
     context = {
         'page_obj': page_obj,
         'posts_count': posts_count,
@@ -78,9 +78,9 @@ def post_create(request):
     grouplist = Group.objects.all()
     if request.method == 'POST':
         form = CreatePost(
-            request.POST or None, 
-            files=request.FILES or None, 
-            )
+            request.POST or None,
+            files=request.FILES or None,
+        )
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
@@ -97,10 +97,10 @@ def post_edit(request, post_id):
     template = 'posts/edit_post.html'
     post = get_object_or_404(Post, id=post_id)
     form = CreatePost(
-            request.POST or None, 
-            files=request.FILES or None, 
-            instance=post
-            )
+        request.POST or None,
+        files=request.FILES or None,
+        instance=post
+    )
     if request.method == 'GET':
         if not request.user == post.author:
             return redirect('posts:post_detail', post_id=post_id)
@@ -122,6 +122,7 @@ def add_comment(request, post_id):
         comment.save()
     return redirect('posts:post_detail', post_id=post_id)
 
+
 @login_required
 def follow_index(request):
     template = 'posts/follow.html'
@@ -134,17 +135,19 @@ def follow_index(request):
     }
     return render(request, template, context)
 
-@login_required 
-def profile_follow(request, username): 
-    author = get_object_or_404(User, username=username) 
-    follow_check = Follow.objects.filter(author=author, follower=request.user) 
-    if author != request.user and not follow_check.exists(): 
-        Follow.objects.create(follower=request.user, author=author) 
-    return redirect('posts:profile', username=username) 
 
-@login_required 
-def profile_unfollow(request, username): 
-    get_object_or_404(Follow, 
-                      follower=request.user, 
-                      author__username=username).delete() 
+@login_required
+def profile_follow(request, username):
+    author = get_object_or_404(User, username=username)
+    follow_check = Follow.objects.filter(author=author, follower=request.user)
+    if author != request.user and not follow_check.exists():
+        Follow.objects.create(follower=request.user, author=author)
+    return redirect('posts:profile', username=username)
+
+
+@login_required
+def profile_unfollow(request, username):
+    get_object_or_404(Follow,
+                      follower=request.user,
+                      author__username=username).delete()
     return redirect('posts:profile', username=username)

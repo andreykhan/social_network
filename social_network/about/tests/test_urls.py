@@ -29,5 +29,3 @@ class AboutUrlTests(TestCase):
         """запрос к несуществующей странице возвращает 404"""
         response = self.guest_client.get('/about/money/')
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
-    
-    

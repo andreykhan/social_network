@@ -34,7 +34,7 @@ class UsersUrlTests(TestCase):
             with self.subTest(url=url):
                 response = self.guest_client.get(url)
                 self.assertTemplateUsed(response, template)
-    
+
     def test_incorrect_url_return_404(self):
         response = self.guest_client.get("/auth/test")
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)

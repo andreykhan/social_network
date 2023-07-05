@@ -4,8 +4,7 @@ from rest_framework import serializers
 
 class PostSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
-    #group = serializers.StringRelatedField()
-    
+
     class Meta:
         model = Post
         fields = ('id', 'text', 'pub_date', 'author', 'group', 'image')
@@ -13,7 +12,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
     posts = serializers.StringRelatedField(many=True, read_only=True)
-    
+
     class Meta:
         model = Group
         fields = ('id', 'title', 'slug', 'description', 'posts')

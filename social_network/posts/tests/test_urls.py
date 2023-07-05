@@ -13,13 +13,13 @@ class PostUrlTests(TestCase):
         super().setUpClass()
         cls.user = User.objects.create_user(username='test_author')
         cls.post = Post.objects.create(
-            text = 'Текстовый заголовок',
-            pub_date = 'May 19, 2023, 10:32 a.m.',
+            text='Текстовый заголовок',
+            pub_date='May 19, 2023, 10:32 a.m.',
             author = cls.user,
         )
         cls.group = Group.objects.create(
-            title = 'тестовая группа',
-            slug = 'actors'
+            title='тестовая группа',
+            slug='actors'
         )
         cls.unauthorized_pages = [
             "/",
