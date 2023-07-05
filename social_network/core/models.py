@@ -5,9 +5,9 @@ class CreateModel(models.Model):
     """Абстрактная модель. Добавляет дату создания."""
     created = models.DateTimeField(
         'дата создания',
-        auto_now_add=True
+        auto_now_add = True
     )
 
     class Meta:
         """абстрактная модель"""
-        abstract=True
+        abstract = True
