@@ -5,7 +5,7 @@ name: Django-app workflow
 on: [push]
 
 jobs:
-  tests:
+  testing project with flake8 and unittests:
     runs-on: ubuntu-latest
 
     steps:
@@ -52,7 +52,7 @@ jobs:
         uses: docker/login-action@v1 
         with:
           username: andrey.khan 
-          password: dckr_pat_g5HIzUYf7uD6NWtSEePKWr_tLQg
+          password: 564003andrey!@#
       - name: Push to Docker Hub
         # Пуш образа в Docker Hub 
         uses: docker/build-push-action@v2 
