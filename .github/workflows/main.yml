@@ -5,7 +5,7 @@ name: Django-app workflow
 on: [push]
 
 jobs:
-  testing project with flake8 and unittests:
+  testing_project_with_flake8_and_unittests:
     runs-on: ubuntu-latest
 
     steps:
