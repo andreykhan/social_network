@@ -72,6 +72,7 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.AWS_EC2_MY_SERVER_KEY }}
         script: |
+          sudo docker pull andreykhan/snet:latest
           sudo docker-compose stop
           sudo docker-compose rm web
           touch .env
