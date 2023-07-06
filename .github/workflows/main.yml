@@ -72,8 +72,6 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.AWS_EC2_MY_SERVER_KEY }}
         script: |
-          # Выполняет pull образа с DockerHub
           sudo docker pull andreykhan/s_net:latest
-          #остановка всех контейнеров
           sudo docker stop $(sudo docker ps -a -q)
           sudo docker run --rm -d -p 5000:5000 andreykhan/s_net:latest
